@@ -47,29 +47,56 @@ class Vampire {
 
   // Returns the vampire object with that name, or null if no vampire exists with that name
   vampireWithName(name) {
-    
+    let foundVampire = null;
+    if(this.name === name) {
+      return this;
+    }
+    for (const vamp of this.offspring) {
+      if(vamp.name === name) {
+        return vamp;
+      }
+      foundVampire = vamp.vampireWithName(name);
+      if(foundVampire !== null) {
+        return foundVampire;
+      }
+    }
+    return foundVampire;
   }
 
   // Returns the total number of vampires that exist
   get totalDescendents() {
-    
+    let count = 0;
+    if(this.offspring) {
+      count += this.offspring.length
+      for(const vamp of this.offspring) {
+        if (vamp.offspring) {
+          count += vamp.totalDescendents;
+        }
+      }
+    }
+    return count;
   }
 
   // Returns an array of all the vampires that were converted after 1980
   get allMillennialVampires() {
+    let millennials = [];
     
+    if(this.offspring) {
+      for(const vamp of this.offspring) {
+        if(vamp.yearConverted > 1980) {
+          millennials.push(vamp);
+        }
+        if(vamp.offspring) {
+          const mills = vamp.allMillennialVampires;
+          for(const mill of mills) {
+            millennials.push(mill);
+          }
+        }
+      }
+    }
+    return millennials;
   }
-
-  /** Stretch **/
-
-  // Returns the closest common ancestor of two vampires.
-  // The closest common anscestor should be the more senior vampire if a direct ancestor is used.
-  // For example:
-  // * when comparing Ansel and Sarah, Ansel is the closest common anscestor.
-  // * when comparing Ansel and Andrew, Ansel is the closest common anscestor.
-  closestCommonAncestor(vampire) {
-
-  }
+  
 }
 
 module.exports = Vampire;
